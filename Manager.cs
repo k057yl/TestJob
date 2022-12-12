@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Manager : MonoBehaviour
 {
@@ -15,9 +16,14 @@ public class Manager : MonoBehaviour
     [SerializeField] GameObject joy;
     [SerializeField] Transform canvas;
 
+    [SerializeField] Text coinText;
+    [SerializeField] Text hpText;
+
     GameObject player;
     GameObject traffic;
     GameObject joystick;
+
+    public float speed;
 
     float randomSpawn;
     float horizJoy;
@@ -36,19 +42,23 @@ public class Manager : MonoBehaviour
     }
     private void Update()
     {
-        randomSpawn = Random.Range(0f, 3f);
         CameraFollow();
+        randomSpawn = Random.Range(0f, 1.5f);
+        
         if(traffic == null) 
         {
             StartCoroutine(Wait());
         }
         horizJoy = joystick.GetComponent<FixedJoystick>().Horizontal;
         verticJoy = joystick.GetComponent<FixedJoystick>().Vertical;
+
+        coinText.text = player.GetComponent<Player>().coin.ToString();
+        hpText.text = player.GetComponent<Player>().hp.ToString();
     }
     private void FixedUpdate()
     {
         player.GetComponent<Animator>().SetFloat("Run", Mathf.Abs(verticJoy));
-        player.GetComponent<Rigidbody>().velocity = new Vector3(horizJoy * 10f, 0f, verticJoy * 10f);
+        player.GetComponent<Rigidbody>().AddForce(new Vector3(horizJoy * speed, 0f, verticJoy * speed));
     }
     void CameraFollow()
     {
